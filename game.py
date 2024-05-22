@@ -44,7 +44,7 @@ class Niveau:
         # Liste de listes. Chaque sous-liste représente un obstacle :
         # [ Numéro de l'ennemi (son id), [Son x, son y]]
 
-    def scroll:
+    def scroll(self):
         pass
 
 
@@ -57,7 +57,7 @@ class Game:
         self.mastermind = Donjon()
 
     def update(self):
-        pass
+        self.spaceship.move()
 
     def draw(self):
         self.spaceship.draw()
