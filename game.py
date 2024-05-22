@@ -8,16 +8,18 @@ class SpaceShip:
         self.shots: list[Tir] = []
         self._can_shoot = False
         self.cooldown = 1
+        self.lives = 3
+        self.speed = 2
 
     def move(self):
         if pyxel.btn(pyxel.KEY_Z):
-            self.y -= 1
+            self.y -= self.speed
         if pyxel.btn(pyxel.KEY_S):
-            self.y += 1
+            self.y += self.speed
         if pyxel.btn(pyxel.KEY_Q):
-            self.x -= 1
+            self.x -= self.speed
         if pyxel.btn(pyxel.KEY_D):
-            self.x += 1
+            self.x += self.speed
 
         if self.x > 256:
             self.x = 256
@@ -50,9 +52,34 @@ class SpaceShip:
         for shot in del_shots:
             del_shots.remove(shot)
 
+    def check_collision_shoots(self, enemies):
+        to_del = []
+        for shot in self.shots:
+            if shot.colision(enemies):
+                to_del.append(shot)
+
+        for shot in to_del:
+            self.shots.remove(shot)
+
+    def collision_spaceship(self, enemies):
+        for e in enemies:
+            if e == (self.x, self.y):
+                self.lives -= 1
+        if self.lives < 1:
+            #TODO
+            pass
+
+    def collision_bonus_spaceship(self, enemies):
+        for e in enemies:
+            if e == (self.x, self.y):
+                self.lives += 1
+
     def draw_shoots(self):
         for shot in self.shots:
             pyxel.blt(shot.x, shot.y, 0, 48, 73, 8, 7, 5)
+
+    def draw_lives(self):
+        pyxel.text(5, 5, f"Vies : {self.lives}", 8)
 
 
 class Tir:
@@ -62,11 +89,12 @@ class Tir:
         self.y = y
 
     def colision(self, enemie):
-    # TODO
+        # TODO
         for e in enemie:
-            if e.x - self.x < 5 and  e.x - self.x > 5 and e.y - self.y > 5 and e.y - self.y < 5:
-                return e
-        return None
+            if (e.x - self.x < 5 or e.x - self.x > 5) and (e.y - self.y > 5 or e.y - self.y < 5):
+                e.pv -= 2
+                return True
+        return False
 
 
 class Donjon:
@@ -105,9 +133,14 @@ class Game:
         self.spaceship.move()
         self.spaceship.shoot()
         self.spaceship.move_shoots()
+        self.spaceship.check_collision_shoots(self.mastermind.niveau_courant.enemies)
+        self.background.out()
+        self.background.add()
+        self.background.defiler()
 
     def draw(self):
         pyxel.cls(0)
+        self.background.draw_background()
         self.spaceship.draw_ship()
         self.spaceship.draw_shoots()
 
