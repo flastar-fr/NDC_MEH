@@ -7,6 +7,7 @@ class SpaceShip:
         self.y: int = 100
         self.shots: list[Tir] = []
         self._can_shoot = False
+        self._can_hit = True
         self.cooldown = 1
         self.lives = 3
         self.speed = 2
@@ -55,7 +56,7 @@ class SpaceShip:
     def check_collision_shoots(self, enemies):
         to_del = []
         for shot in self.shots:
-            if shot.colision(enemies):
+            if shot.collision(enemies):
                 to_del.append(shot)
 
         for shot in to_del:
@@ -88,7 +89,7 @@ class Tir:
         self.x = x
         self.y = y
 
-    def colision(self, enemie):
+    def collision(self, enemie):
         # TODO
         for e in enemie:
             if (e.x - self.x < 5 or e.x - self.x > 5) and (e.y - self.y > 5 or e.y - self.y < 5):
@@ -134,15 +135,25 @@ class Game:
         self.spaceship.shoot()
         self.spaceship.move_shoots()
         self.spaceship.check_collision_shoots(self.mastermind.niveau_courant.enemies)
+        self.spaceship.collision_spaceship(self.mastermind.niveau_courant.obstacles)
         self.background.out()
         self.background.add()
         self.background.defiler()
 
     def draw(self):
         pyxel.cls(0)
-        self.background.draw_background()
-        self.spaceship.draw_ship()
-        self.spaceship.draw_shoots()
+        self.spaceship.draw_lives()
+        self.spaceship.draw_bonus()
+        
+        if self.spaceship.vie():
+            return
+        if not self.pause.verif_pause
+            self.background.draw_background()
+            self.spaceship.draw_ship()
+            self.spaceship.draw_shoots()
+            self.mastermind.gerer_scroll()
+            self.spaceship.draw_lives()
+
 
 
 if __name__ == '__main__':
