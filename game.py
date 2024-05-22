@@ -131,14 +131,27 @@ class Game:
         self.mastermind = Donjon()
 
     def update(self):
-        self.spaceship.move()
-        self.spaceship.shoot()
-        self.spaceship.move_shoots()
-        self.spaceship.check_collision_shoots(self.mastermind.niveau_courant.enemies)
-        self.spaceship.collision_spaceship(self.mastermind.niveau_courant.obstacles)
-        self.background.out()
-        self.background.add()
-        self.background.defiler()
+        """
+        Gère l'actualisation des variables chaque seconde.
+        :return: Nothing.
+        """
+        pyxel.cls(0)
+        self.pause.mettre_pause()
+        if self.spaceship.vie():
+            return
+        if self.pause.pause:
+            etage = self.mastermind.niveau_courant.etage
+            self.spaceship.move()
+            self.spaceship.shoot()
+            self.spaceship.move_shoots()
+            self.spaceship.check_collision_shoots(self.mastermind.niveau_courant.obstacles)
+            self.spaceship.collision_spaceship(self.mastermind.niveau_courant.obstacles)
+            self.spaceship.collision_bonus_spaceship(self.mastermind.niveau_courant.bonus)
+            self.spaceship.speed = 2 if etage < 4 else 4
+            self.background.defilement = etage * 1.1 if etage * 1.1 < 6 else 6
+            self.background.out()
+            self.background.add()
+            self.background.defiler()
 
     def draw(self):
         pyxel.cls(0)
